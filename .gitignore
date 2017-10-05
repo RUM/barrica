@@ -2,3 +2,4 @@ config.mk
 key.sql
 snippet.sql
 *.key
+rum-*--*.sql
