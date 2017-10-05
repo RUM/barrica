@@ -27,10 +27,19 @@ grant all on articles to rumadmin;
 
 grant select on table articles to guest;
 
+create or replace function articles_with_tags(tags_array jsonb)
+returns table(id uuid)
+language plpgsql immutable as $$ begin
+  return query
+    select articles.id
+      from articles
+      where tags::jsonb ?& array(select jsonb_array_elements_text(tags_array));
+end $$;
+
 create or replace function strip_tags()
 returns trigger
 language plpgsql as $$ begin
-  new.tags = to_json(array(select lower(json_array_elements_text(new.tags::json))))::jsonb - '';
+  new.tags = to_json(array(select lower(trim(json_array_elements_text(new.tags::json)))))::jsonb - '';
 
   return new;
 end $$;
