@@ -23,8 +23,7 @@ dump:
 	@mv /tmp/$(DBNAME).sql $(DBNAME)-$$(date +'%Y-%m-%d--%T').sql
 
 restore:
-	@cp /tmp/$(DBNAME).sql ./data/rum.sql
-	@psql $(DB) -c "SET session_replication_role = replica;" -f ./data/rum.sql
+	@psql $(DB) -c "SET session_replication_role = replica;" -f ./rum.sql
 
 snippet:
 	@psql $(DB) -f snippet.sql
@@ -38,7 +37,7 @@ console:
 rebuild: dump drop build restore
 
 restore-local:
-	@psql postgres://postgres@localhost/rum -c "SET session_replication_role = replica;" -f ./data/rum.sql
+	@psql postgres://postgres@localhost/rum -c "SET session_replication_role = replica;" -f ./rum.sql
 
 restore-new:
-	@psql $(DB) -c "SET session_replication_role = replica;" -f ./data/rum.sql
+	@psql $(DB) -c "SET session_replication_role = replica;" -f ./rum.sql
