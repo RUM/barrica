@@ -33,7 +33,8 @@ language plpgsql immutable as $$ begin
   return query
     select articles.id
       from articles
-      where tags::jsonb ?& array(select jsonb_array_elements_text(tags_array));
+      where tags::jsonb ?| array(select jsonb_array_elements_text(tags_array));
+      -- where tags::jsonb ?& array(select jsonb_array_elements_text(tags_array));
 end $$;
 
 create or replace function strip_tags()

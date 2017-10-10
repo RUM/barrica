@@ -1,5 +1,6 @@
 create extension pgcrypto;
 create extension pgjwt;
+create extension unaccent;
 
 create role rumadmin;
 
