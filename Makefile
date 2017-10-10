@@ -33,7 +33,7 @@ list:
 	@psql $(DB) -P pager=off -c "\dt[+]"
 
 console:
-	@psql $(DB)
+	@psql $(DB) -v "private_key=`cat ./rum-secret.key`" -v "key_passwd=`cat ./rum-secret-passwd.txt`"
 
 rebuild: dump drop build restore
 
