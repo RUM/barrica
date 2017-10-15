@@ -1,43 +1,52 @@
 # In config.mk:
 #
 # PASSWD =
-# PG = postgres://postgres@localhost
+# PG_PROD = postgres://...
+# PG_DEV = postgres://postgres@localhost
 # DBNAME = rum
+# DB = $(PG_DEV)/$(DBNAME)
+#
+# ifdef production
+# DB = $(PG_PROD)/$(DBNAME)
+# endif
+#
 # TEMPLATE = $(PG)/template1
-# DB = $(PG)/$(DBNAME)
-# SQLS = db releases collabs articles collaborations mailing pages suggestions
 
+# or...
 include config.mk
 
-drop:
-	@psql $(TEMPLATE) -c "drop   database $(DBNAME);"
-	@psql $(TEMPLATE) -c "create database $(DBNAME);"
-
-build:
-	@for file in $(SQLS); do \
-		psql $(DB) -f sql/$$file.sql ; \
-	done
+console:
+	@psql $(DB) \
+		--variable="private_key=`cat ./rum-secret.key`" \
+		--variable="key_passwd=`cat ./rum-secret-passwd.txt`"
 
 dump:
-	@pg_dump $(DB) -Fp --data-only --no-owner --no-acl > /tmp/$(DBNAME).sql
-	@mv /tmp/$(DBNAME).sql $(DBNAME)-$$(date +'%Y-%m-%d--%T').sql
+	@pg_dump $(DB) \
+		--format=p \
+		--data-only \
+		--no-owner \
+		--no-acl > $(DBNAME)-$$(date +'%Y-%m-%d--%T').sql
+
+build:
+	@for file in db releases collabs articles collaborations mailing pages suggestions; do \
+		psql $(DB) --file=sql/$$file.sql ; \
+	done
 
 restore:
-	@psql $(DB) -c "SET session_replication_role = replica;" -f ./rum.sql
+	@psql $(DB) \
+		--command="SET session_replication_role = replica;" \
+		--file=./rum.sql
 
 snippet:
 	@psql $(DB) -f snippet.sql
 
 list:
-	@psql $(DB) -P pager=off -c "\dt[+]"
+	@psql $(DB) \
+		--pset="pager=off" \
+		--command="\dt[+]"
 
-console:
-	@psql $(DB) -v "private_key=`cat ./rum-secret.key`" -v "key_passwd=`cat ./rum-secret-passwd.txt`"
+drop:
+	@psql $(TEMPLATE1) -c "drop   database $(DBNAME);"
+	@psql $(TEMPLATE1) -c "create database $(DBNAME);"
 
 rebuild: dump drop build restore
-
-restore-local:
-	@psql postgres://postgres@localhost/rum -c "SET session_replication_role = replica;" -f ./rum.sql
-
-restore-new:
-	@psql $(DB) -c "SET session_replication_role = replica;" -f ./rum.sql

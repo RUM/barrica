@@ -2,7 +2,7 @@ create table if not exists
   collabs (
     id       uuid primary key
   , fname    varchar(50) not null
-  , lname    varchar(50) not null check (ads <> '')
+  , lname    varchar(50) not null
   , sinopsis text
   , starred  boolean default false
   , online   boolean default false

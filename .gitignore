@@ -4,3 +4,4 @@ snippet.sql
 *.key
 rum-*--*.sql
 rum-secret-passwd.txt
+rum.sql
