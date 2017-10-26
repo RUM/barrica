@@ -27,7 +27,7 @@ grant all on articles to rumadmin;
 
 grant select on table articles to guest;
 
-create or replace function articles_with_tags(tags_array jsonb)
+create function articles_with_tags(tags_array jsonb)
 returns table(id uuid)
 language plpgsql immutable as $$ begin
   return query
@@ -37,7 +37,7 @@ language plpgsql immutable as $$ begin
       -- where tags::jsonb ?& array(select jsonb_array_elements_text(tags_array));
 end $$;
 
-create or replace function strip_tags()
+create function strip_tags()
 returns trigger
 language plpgsql as $$ begin
   new.tags = to_json(array(select lower(trim(json_array_elements_text(new.tags::json)))))::jsonb - '';
@@ -55,7 +55,3 @@ create trigger insert_uuid
   for each row
   execute procedure insert_uuid();
 
--- create trigger insert_metadata
---   before insert or update on articles
---   for each row
---   execute procedure insert_metadata('articles');

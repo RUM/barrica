@@ -20,7 +20,3 @@ create trigger insert_uuid
   for each row
   execute procedure insert_uuid();
 
--- create trigger insert_min_metadata
---   before insert or update on collabs
---   for each row
---   execute procedure insert_metadata('collabs');

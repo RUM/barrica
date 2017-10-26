@@ -15,7 +15,7 @@ create table if not exists
 
 grant all on mailing to rumadmin;
 
-create or replace function signup(email text, news boolean, release boolean, paper boolean)
+create function signup(email text, news boolean, release boolean, paper boolean)
 returns boolean
 language plpgsql as $$ begin
   insert into mailing
@@ -25,7 +25,7 @@ language plpgsql as $$ begin
   return true;
 end $$;
 
-create or replace function encrypt_email()
+create function encrypt_email()
 returns trigger
 language plpgsql as $$ begin
   if tg_op = 'INSERT' then
@@ -37,7 +37,7 @@ language plpgsql as $$ begin
   end if;
 end $$;
 
-create or replace function insert_created()
+create function insert_created()
 returns trigger
 language plpgsql as $$ begin
   if tg_op = 'INSERT' then

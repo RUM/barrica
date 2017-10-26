@@ -27,6 +27,11 @@ dump:
 		--no-owner \
 		--no-acl > $(DBNAME)-$$(date +'%Y-%m-%d--%T').sql
 
+list:
+	@psql $(DB) \
+		--pset="pager=off" \
+		--command="\dt[+]"
+
 build:
 	@for file in db releases collabs articles collaborations mailing pages suggestions; do \
 		psql $(DB) --file=sql/$$file.sql ; \
@@ -40,10 +45,6 @@ restore:
 snippet:
 	@psql $(DB) -f snippet.sql
 
-list:
-	@psql $(DB) \
-		--pset="pager=off" \
-		--command="\dt[+]"
 
 drop:
 	@psql $(TEMPLATE1) -c "drop   database $(DBNAME);"

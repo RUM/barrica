@@ -20,7 +20,3 @@ create trigger insert_uuid
   for each row
   execute procedure insert_uuid();
 
--- create trigger insert_metadata
---   before insert or update on releases
---   for each row
---   execute procedure insert_metadata('releases');
