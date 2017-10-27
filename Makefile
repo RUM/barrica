@@ -4,10 +4,12 @@
 # PG_PROD = postgres://...
 # PG_DEV = postgres://postgres@localhost
 # DBNAME = rum
-# DB = $(PG_DEV)/$(DBNAME)
+# DB_DEV = $(PG_DEV)/$(DBNAME)
+# DB_PROD = $(PG_PROD)/$(DBNAME)
 #
+# DB = $(DB_DEV)
 # ifdef production
-# DB = $(PG_PROD)/$(DBNAME)
+# DB = $(DB_PROD)
 # endif
 #
 # TEMPLATE = $(PG)/template1
@@ -32,18 +34,20 @@ list:
 		--pset="pager=off" \
 		--command="\dt[+]"
 
+# ONLY TO BE RAN IN DEV:
+
 build:
 	@for file in db releases collabs articles collaborations mailing pages suggestions; do \
-		psql $(DB) --file=sql/$$file.sql ; \
+		psql $(DB_DEV) --file=sql/$$file.sql ; \
 	done
 
 restore:
-	@psql $(DB) \
+	@psql $(DB_DEV) \
 		--command="SET session_replication_role = replica;" \
 		--file=./rum.sql
 
 snippet:
-	@psql $(DB) -f snippet.sql
+	@psql $(DB_DEV) -f snippet.sql
 
 
 drop:
