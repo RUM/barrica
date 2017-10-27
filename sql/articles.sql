@@ -55,3 +55,17 @@ create trigger insert_uuid
   for each row
   execute procedure insert_uuid();
 
+create or replace function publish_collabs()
+returns trigger
+language plpgsql as $$ begin
+  if tg_op = 'UPDATE' and new.online then
+    update collabs set online = true where id in (select collab_id from collaborations where article_id = new.id);
+  end if;
+
+  return new;
+end $$;
+
+create trigger publish_collabs
+  after update on articles
+  for each row
+  execute procedure publish_collabs();

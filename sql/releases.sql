@@ -20,3 +20,17 @@ create trigger insert_uuid
   for each row
   execute procedure insert_uuid();
 
+create function publish_articles()
+returns trigger
+language plpgsql as $$ begin
+  if tg_op = 'UPDATE' then
+    update articles set online = new.online where release_id = new.id;
+  end if;
+
+  return new;
+end $$;
+
+create trigger publish_articles
+  after update on releases
+  for each row
+  execute procedure publish_articles();
