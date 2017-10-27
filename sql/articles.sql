@@ -27,13 +27,13 @@ grant all on articles to rumadmin;
 
 grant select on table articles to guest;
 
-create function articles_with_tags(tags_array jsonb)
+create function articles_with_tags($1 jsonb)
 returns table(id uuid)
 language plpgsql immutable as $$ begin
   return query
     select articles.id
       from articles
-      where tags::jsonb ?| array(select jsonb_array_elements_text(tags_array));
+      where tags::jsonb ?| array(select jsonb_array_elements_text($1));
       -- where tags::jsonb ?& array(select jsonb_array_elements_text(tags_array));
 end $$;
 
@@ -54,6 +54,16 @@ create trigger insert_uuid
   before insert on articles
   for each row
   execute procedure insert_uuid();
+
+create function seo_title(articles)
+returns text as $$
+  select seo_string($1.title);
+$$ language sql;
+
+create function plain_title(articles)
+returns text as $$
+  select strip_md($1.title);
+$$ language sql;
 
 create or replace function publish_collabs()
 returns trigger

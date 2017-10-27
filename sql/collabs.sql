@@ -20,3 +20,12 @@ create trigger insert_uuid
   for each row
   execute procedure insert_uuid();
 
+create function name(collabs) returns text as $$
+  select $1.fname || ' ' || $1.lname;
+$$ language sql;
+
+create function seo_name(collabs)
+returns text as $$
+  select seo_string($1.name);
+$$ language sql;
+

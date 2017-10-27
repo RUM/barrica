@@ -9,7 +9,21 @@ returns trigger
 language plpgsql as $$ begin
   new.id = gen_random_uuid();
   return new;
+end $$;
 
+create function strip_md(text)
+returns text
+language plpgsql as $$ begin
+  return regexp_replace($1, '[#*_]+', '', 'g');
+end $$;
+
+create function seo_string(text)
+returns text
+language plpgsql as $$ begin
+  return
+    regexp_replace(
+      trim(lower(regexp_replace(unaccent($1), '["¿?_*.,:/&\\]+', '', 'g'))),
+      '\s+', '-', 'g');
 end $$;
 
 -- create function insert_metadata()
