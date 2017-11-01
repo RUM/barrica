@@ -27,13 +27,13 @@ grant all on articles to rumadmin;
 
 grant select on table articles to guest;
 
-create function articles_with_tags($1 jsonb)
+create function articles_with_tags(tags_array jsonb)
 returns table(id uuid)
 language plpgsql immutable as $$ begin
   return query
     select articles.id
       from articles
-      where tags::jsonb ?| array(select jsonb_array_elements_text($1));
+      where tags::jsonb ?| array(select jsonb_array_elements_text(tags_array));
       -- where tags::jsonb ?& array(select jsonb_array_elements_text(tags_array));
 end $$;
 
