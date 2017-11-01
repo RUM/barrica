@@ -29,3 +29,14 @@ returns text as $$
   select seo_string($1.name);
 $$ language sql;
 
+create or replace function collabs_suggestion(i int)
+returns table(id uuid)
+language plpgsql immutable as $$ begin
+  return query
+    select collabs.id
+      from collabs
+      where starred and online
+      order by random()
+      limit i;
+end $$;
+

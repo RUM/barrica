@@ -37,6 +37,17 @@ language plpgsql immutable as $$ begin
       -- where tags::jsonb ?& array(select jsonb_array_elements_text(tags_array));
 end $$;
 
+create or replace function articles_suggestion(i int)
+returns table(id uuid)
+language plpgsql immutable as $$ begin
+  return query
+    select articles.id
+      from articles
+      where starred and online
+      order by random()
+      limit i;
+end $$;
+
 create function strip_tags()
 returns trigger
 language plpgsql as $$ begin
