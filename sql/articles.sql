@@ -66,6 +66,20 @@ create trigger insert_uuid
   for each row
   execute procedure insert_uuid();
 
+create function section_name(articles)
+returns text as $$
+  select (metadata::jsonb->>'sections')::jsonb->>($1.metadata::jsonb->>'section')::integer
+    from releases
+    where id = $1.release_id;
+$$ language sql;
+
+create function release_name(articles)
+returns text as $$
+  select name
+    from releases
+    where id = $1.release_id;
+$$ language sql;
+
 create function seo_title(articles)
 returns text as $$
   select seo_string($1.title);
