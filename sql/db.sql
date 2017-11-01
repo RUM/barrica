@@ -2,6 +2,8 @@ create extension pgcrypto;
 create extension pgjwt;
 create extension unaccent;
 
+create type months as enum ('enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre');
+
 create role rumadmin;
 
 create function insert_uuid()
@@ -24,6 +26,14 @@ language plpgsql as $$ begin
     regexp_replace(
       trim(lower(regexp_replace(unaccent($1), '["¿?_*.,:/&\\]+', '', 'g'))),
       '\s+', '-', 'g');
+end $$;
+
+create function month_year(anyelement)
+returns text
+language plpgsql as $$ begin
+  return
+    initcap((enum_range(NULL::months))[extract(month from $1.date)]::text)
+    || ' de ' || extract(year from $1.date)::text;
 end $$;
 
 -- create function insert_metadata()
