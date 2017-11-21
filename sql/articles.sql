@@ -4,7 +4,6 @@ create table if not exists
   , title      varchar(256) not null
   , subtitle   varchar(256)
   , file       varchar(50)
-  , date       date
   , quote      text
   , content    text
   , cover      text
@@ -78,6 +77,18 @@ returns text as $$
   select name
     from releases
     where id = $1.release_id;
+$$ language sql;
+
+create function release_date(articles)
+returns date as $$
+  select date
+    from releases
+    where id = $1.release_id;
+$$ language sql;
+
+create function release_month_year(articles)
+returns text as $$
+  select month_year($1.release_date);
 $$ language sql;
 
 create function seo_title(articles)
