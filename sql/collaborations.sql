@@ -1,4 +1,4 @@
-create type collaboration_types as enum ('author', 'co-author', 'translator', 'editor');
+create type collaboration_types as enum ('author', 'co-author', 'translator', 'editor', 'guest', 'producer', 'host');
 
 create table if not exists
   collaborations (
