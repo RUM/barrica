@@ -50,6 +50,9 @@ end $$;
 create function articles_clean_up()
 returns trigger
 language plpgsql as $$ begin
+  new.content = trim_or_null(new.content);
+  new.quote = trim_or_null(new.quote);
+
   new.tags = to_json(array(select lower(trim(json_array_elements_text(new.tags::json)))))::jsonb - '';
 
   return new;

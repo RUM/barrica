@@ -20,6 +20,16 @@ language plpgsql as $$ begin
   return regexp_replace($1, '[#*_]+', '', 'g');
 end $$;
 
+create function trim_or_null(text)
+returns text
+language plpgsql as $$ begin
+  if length(trim($1)) = 0 then
+    return null;
+  else
+    return trim($1);
+  end if;
+end $$;
+
 create function seo_string(text)
 returns text
 language plpgsql as $$ begin
