@@ -23,3 +23,16 @@ alter table collaborations
   add constraint collaborations_collab_id_fkey
   foreign key (collab_id) references collabs(id)
   on delete cascade;
+
+create view release_collabs as
+  select
+    release_id, releases.name as release_name,
+    article_id, plain_title(articles) as title, articles.online as article_online,
+    collab_id, name(collabs) as collab_name, collabs.online as collab_online,
+    collaborations.relation from collabs
+    join collaborations on collab_id = collabs.id
+    join articles on articles.id = article_id
+    join releases on release_id = releases.id;
+
+grant select on table release_collabs to guest;
+grant select on table release_collabs to rumadmin;
