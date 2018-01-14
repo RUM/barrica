@@ -40,3 +40,11 @@ language plpgsql immutable as $$ begin
       limit i;
 end $$;
 
+create view collabs_index_letters as
+  select array(
+    select distinct on (t) unaccent(left(lname,1)) as t
+    from collabs
+    where online
+    order by t asc);
+
+grant select on table collabs_index_letters to guest;
