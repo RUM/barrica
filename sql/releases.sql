@@ -20,6 +20,11 @@ create trigger insert_uuid
   for each row
   execute procedure insert_uuid();
 
+create function seo_name(releases)
+returns text as $$
+  select seo_string($1.name);
+$$ language sql;
+
 create function publish_articles()
 returns trigger
 language plpgsql as $$ begin
