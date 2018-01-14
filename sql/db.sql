@@ -5,6 +5,7 @@ create extension unaccent;
 create type months as enum ('enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre');
 
 create role rumadmin;
+create role guest nologin;
 
 create function insert_uuid()
 returns trigger

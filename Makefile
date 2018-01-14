@@ -1,4 +1,4 @@
-# In config.mk:
+# In default.mk:
 #
 # PASSWD =
 # PG_PROD = postgres://...
@@ -7,15 +7,19 @@
 # DB_DEV = $(PG_DEV)/$(DBNAME)
 # DB_PROD = $(PG_PROD)/$(DBNAME)
 #
+# TIME=$(shell date +'%Y-%m-%d--%T')
+# DUMP=$(DBNAME)-$(TIME).sql
+#
 # DB = $(DB_DEV)
-# ifdef production
+#
+# ifeq ($(env), production)
 # DB = $(DB_PROD)
 # endif
 #
 # TEMPLATE = $(PG)/template1
 
 # or...
-include config.mk
+include default.mk
 
 console:
 	@psql $(DB) \
@@ -27,7 +31,9 @@ dump:
 		--format=p \
 		--data-only \
 		--no-owner \
-		--no-acl > $(DBNAME)-$$(date +'%Y-%m-%d--%T').sql
+		--no-acl > $(DUMP)
+
+	@ln -sf $(DUMP) rum.sql
 
 list:
 	@psql $(DB) \
@@ -37,7 +43,7 @@ list:
 # ONLY TO BE RAN IN DEV:
 
 build:
-	@for file in db releases collabs articles collaborations mailing pages suggestions; do \
+	@for file in db releases collabs articles collaborations mailing pages suggestions announcements; do \
 		psql $(DB_DEV) --file=sql/$$file.sql ; \
 	done
 
@@ -51,7 +57,7 @@ snippet:
 
 
 drop:
-	@psql $(TEMPLATE1) -c "drop   database $(DBNAME);"
-	@psql $(TEMPLATE1) -c "create database $(DBNAME);"
+	@psql $(TEMPLATE1) -c "drop   database $(DBNAME)_dev;"
+	@psql $(TEMPLATE1) -c "create database $(DBNAME)_dev;"
 
-rebuild: dump drop build restore
+rebuild: drop build restore

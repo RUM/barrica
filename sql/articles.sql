@@ -47,7 +47,7 @@ language plpgsql immutable as $$ begin
       limit i;
 end $$;
 
-create function strip_tags()
+create function articles_clean_up()
 returns trigger
 language plpgsql as $$ begin
   new.tags = to_json(array(select lower(trim(json_array_elements_text(new.tags::json)))))::jsonb - '';
@@ -55,10 +55,10 @@ language plpgsql as $$ begin
   return new;
 end $$;
 
-create trigger strip_tags
+create trigger articles_clean_up
   before update on articles
   for each row
-  execute procedure strip_tags();
+  execute procedure articles_clean_up();
 
 create trigger insert_uuid
   before insert on articles
