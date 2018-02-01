@@ -7,6 +7,7 @@ create table if not exists
   , quote      text
   , content    text
   , cover      text
+  , asset      varchar(256) default null
   , tags       jsonb default '[]'
   , starred    boolean default false
   , online     boolean default false
