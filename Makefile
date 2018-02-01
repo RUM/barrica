@@ -17,14 +17,17 @@
 # endif
 #
 # TEMPLATE = $(PG)/template1
+#
+# PGP_KEY = somefile
+# PGP_KEY_PASSWD =
 
 # or...
 include default.mk
 
 console:
 	@psql $(DB) \
-		--variable="private_key=`cat ./rum-secret.key`" \
-		--variable="key_passwd=`cat ./rum-secret-passwd.txt`"
+		--variable="private_key=`cat $(PGP_KEY)`" \
+		--variable="key_passwd=$(PGP_KEY_PASSWD)"
 
 dump:
 	@pg_dump $(DB) \

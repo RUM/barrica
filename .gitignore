@@ -1,7 +1,6 @@
-config.mk
-key.sql
+default.mk
 snippet.sql
 *.key
+*.asc
 rum-*--*.sql
-rum-secret-passwd.txt
 rum.sql
