@@ -36,3 +36,16 @@ create trigger announcements_cleanup
   before update on announcements
   for each row
   execute procedure announcements_cleanup();
+
+create or replace function announcements_keep_sent()
+returns trigger
+language plpgsql immutable as $$ begin
+  if ((old.sent is not null) and (tg_op = 'DELETE')) then
+    raise exception 'Cannot delete sent announcements.';
+  end if;
+end $$;
+
+create trigger announcements_keep_sent
+  before delete on announcements
+  for each row
+  execute procedure announcements_keep_sent();
