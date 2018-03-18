@@ -3,6 +3,7 @@ create table if not exists
     id       uuid primary key
   , fname    varchar(50) not null
   , lname    varchar(50) not null
+  , aka      varchar(50) not null
   , sinopsis text
   , starred  boolean default false
   , online   boolean default false
@@ -20,8 +21,12 @@ create trigger insert_uuid
   for each row
   execute procedure insert_uuid();
 
-create function name(collabs) returns text as $$
-  select $1.fname || ' ' || $1.lname;
+create function name(collabs)
+returns text as $$
+  select
+    coalesce(nullif($1.fname || ' ', '_ '), '') ||
+    coalesce(nullif($1.lname || ' ', '_ '), '') ||
+    coalesce('"' || $1.aka || '"', '');
 $$ language sql;
 
 create function seo_name(collabs)
@@ -40,9 +45,9 @@ language plpgsql immutable as $$ begin
       limit i;
 end $$;
 
-create view collabs_index_letters as
+create or replace view collabs_index_letters as
   select array(
-    select distinct on (t) unaccent(left(lname,1)) as t
+    select distinct on (t) unaccent(left(coalesce(nullif(lname, '_'), aka),1)) as t
     from collabs
     where online
     order by t asc);
