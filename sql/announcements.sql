@@ -18,11 +18,7 @@ create or replace function announcements_cleanup()
 returns trigger
 language plpgsql immutable as $$ begin
   if ((old.sent is not null) and (old.sent != new.sent)) then
-    raise exception 'Cannot update locked (sent) announcements.';
-  end if;
-
-  if (new.due <= current_date) then
-    raise exception 'Cannot set send date BEFORE tomorrow 00:00hrs.';
+    raise exception 'Cannot update sent announcements.';
   end if;
 
   if (new.sent != current_date) then

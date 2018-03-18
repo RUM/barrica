@@ -2,7 +2,7 @@ create table if not exists
   mailing (
     id            uuid primary key
   , created       date
-  , email         varchar(50)
+  , email         varchar(128)
   , email_hash    bytea
   , email_sha     varchar(64) unique
   , confirmed     bool default false

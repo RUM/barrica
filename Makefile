@@ -7,8 +7,8 @@
 # DB_DEV = $(PG_DEV)/$(DBNAME)
 # DB_PROD = $(PG_PROD)/$(DBNAME)
 #
-# TIME=$(shell date +'%Y-%m-%d--%T')
-# DUMP=$(DBNAME)-$(TIME).sql
+# TIME = $(shell date +'%Y-%m-%d--%T')
+# DUMP = $(DBNAME)-$(TIME).sql
 #
 # DB = $(DB_DEV)
 #
@@ -18,16 +18,18 @@
 #
 # TEMPLATE = $(PG)/template1
 #
-# PGP_KEY = somefile
+# PGP_PRIVATE_KEY = somefile
 # PGP_KEY_PASSWD =
+# PGP_PUBLIC_KEY =
 
 # or...
 include default.mk
 
 console:
 	@psql $(DB) \
-		--variable="private_key=`cat $(PGP_KEY)`" \
-		--variable="key_passwd=$(PGP_KEY_PASSWD)"
+		--variable="private_key=`cat $(PGP_PRIVATE_KEY)`" \
+		--variable="key_passwd=$(PGP_KEY_PASSWD)" \
+		--variable="public_key=`cat $(PGP_PUBLIC_KEY)`"
 
 dump:
 	@pg_dump $(DB) \
@@ -36,7 +38,7 @@ dump:
 		--no-owner \
 		--no-acl > $(DUMP)
 
-	@ln -sf $(DUMP) rum.sql
+	@ln -sf $(DUMP) ./dumps/rum-latest.sql
 
 list:
 	@psql $(DB) \
@@ -53,7 +55,7 @@ build:
 restore:
 	@psql $(DB_DEV) \
 		--command="SET session_replication_role = replica;" \
-		--file=./rum.sql
+		--file=./dumps/rum-latest.sql
 
 snippet:
 	@psql $(DB_DEV) -f snippet.sql

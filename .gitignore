@@ -4,3 +4,4 @@ snippet.sql
 *.asc
 rum-*--*.sql
 rum.sql
+dumps

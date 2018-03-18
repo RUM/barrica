@@ -109,7 +109,7 @@ create or replace function publish_collabs()
 returns trigger
 language plpgsql as $$ begin
   if tg_op = 'UPDATE' and new.online then
-    update collabs set online = true where id in (select collab_id from collaborations where article_id = new.id);
+    update collabs set online = true where id in (select collab_id from collaborations where article_id = new.id and relation not in ('guest', 'producer', 'host'));
   end if;
 
   return new;
