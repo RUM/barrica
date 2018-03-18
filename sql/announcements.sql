@@ -1,10 +1,10 @@
 create table if not exists
   announcements (
-    id       uuid primary key
-  , title    varchar(50) not null
-  , content  text not null
-  , due      date
-  , sent     date
+    id         uuid primary key
+  , title      varchar(50) not null
+  , text_body  text not null
+  , html_body  text
+  , sent       date
   );
 
 grant all on announcements to rumadmin;
@@ -25,7 +25,8 @@ language plpgsql immutable as $$ begin
     raise exception 'Sent has to be set to TODAY.';
   end if;
 
-  new.content = trim_or_null(new.content);
+  new.text_body = trim_or_null(new.text_body);
+  new.html_body = trim_or_null(new.html_body);
   new.title = trim_or_null(new.title);
 
   return new;
