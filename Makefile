@@ -7,8 +7,9 @@
 # DB_DEV = $(PG_DEV)/$(DBNAME)
 # DB_PROD = $(PG_PROD)/$(DBNAME)
 #
-# TIME = $(shell date +'%Y-%m-%d--%T')
+# TIME != date +'%Y-%m-%d--%T'
 # DUMP = $(DBNAME)-$(TIME).sql
+# TMPDIR != mktemp -d
 #
 # DB = $(DB_DEV)
 #
@@ -26,6 +27,7 @@
 include default.mk
 
 console:
+	@echo -e "Run: \nset s.pk = :'private_key'; set s.pw = :'key_passwd';\n"
 	@psql $(DB) \
 		--variable="private_key=`cat $(PGP_PRIVATE_KEY)`" \
 		--variable="key_passwd=$(PGP_KEY_PASSWD)" \
@@ -36,9 +38,9 @@ dump:
 		--format=p \
 		--data-only \
 		--no-owner \
-		--no-acl > $(DUMP)
+		--no-acl > dumps/$(DUMP)
 
-	@ln -sf $(DUMP) ./dumps/rum-latest.sql
+	@(cd dumps && ln -sf $(DUMP) rum-latest.sql)
 
 list:
 	@psql $(DB) \
