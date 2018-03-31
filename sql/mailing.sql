@@ -38,6 +38,12 @@ language plpgsql as $$ begin
   end if;
 end $$;
 
+create or replace function decrypted_email(mailing)
+returns text
+language plpgsql as $$ begin
+  return pgp_pub_decrypt($1.email_hash, dearmor(current_setting('s.pk')), current_setting('s.pw'));
+end $$;
+
 create function insert_created()
 returns trigger
 language plpgsql as $$ begin

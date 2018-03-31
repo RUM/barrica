@@ -2,6 +2,7 @@ default.mk
 snippet.sql
 *.key
 *.asc
+*.pub
 rum-*--*.sql
 rum.sql
 dumps
