@@ -3,7 +3,7 @@ create table if not exists
     id       uuid primary key
   , fname    varchar(50) not null
   , lname    varchar(50) not null
-  , aka      varchar(50) not null
+  , aka      varchar(50)
   , sinopsis text
   , starred  boolean default false
   , online   boolean default false

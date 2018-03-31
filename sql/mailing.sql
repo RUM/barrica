@@ -9,6 +9,7 @@ create table if not exists
   , news          bool default false
   , release       bool default false
   , paper         bool default false
+  , test          bool default false
   , delete_link   varchar(100)
   , settings_link varchar(100)
   );
