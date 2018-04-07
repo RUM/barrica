@@ -26,11 +26,17 @@ language plpgsql as $$ begin
 		return true;
 end $$;
 
+create function sha_email(email text)
+returns text
+language plpgsql as $$ begin
+	return encode(digest(digest(email, 'sha256'), 'sha256'), 'hex');
+end $$;
+
 create function encrypt_email()
 returns trigger
 language plpgsql as $$ begin
 	if tg_op = 'INSERT' then
-		new.email_sha = encode(digest(digest(new.email, 'sha256'), 'sha256'), 'hex');
+		new.email_sha = sha_email(new.email);
 		new.email_hash = pgp_pub_encrypt(new.email, dearmor(current_setting('app.pub_key')));
 		new.email = NULL;
 
