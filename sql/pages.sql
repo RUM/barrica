@@ -1,8 +1,8 @@
 create table if not exists
-  pages (
-    id varchar(20) primary key
-  , content text
-  );
+	pages (
+		  id varchar(20) primary key
+		, content text
+	);
 
 grant all on pages to rumadmin;
 
